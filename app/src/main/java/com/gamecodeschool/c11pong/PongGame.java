@@ -311,7 +311,7 @@ class PongGame extends SurfaceView implements Runnable {
                 // Display the game over message
                 mCanvas.drawText("Game Over", mScreenX / 2 - 100, mScreenY / 2, mPaint);
 
-                mCanvas.drawText("Tap anywhere to Start.", mScreenX / 2 - 300, mScreenY / 2 + 100, mPaint);
+                mCanvas.drawText("Tap anywhere to restart.", mScreenX / 2 - 300, mScreenY / 2 + 100, mPaint);
             } else {
                 // Draw the HUD
                 mCanvas.drawText("Score: " + mScore +
@@ -327,12 +327,6 @@ class PongGame extends SurfaceView implements Runnable {
                 }
             }
 
-            // Check for taps on the game over screen to reset the game
-            if (mGameOver && isGameOverTapped(motionEvent.getX(), motionEvent.getY())) {
-                startNewGame();
-                mGameOver = false;
-            }
-
             // Display the drawing on screen
             // unlockCanvasAndPost is a method of SurfaceView
             mOurHolder.unlockCanvasAndPost(mCanvas);
@@ -343,42 +337,46 @@ class PongGame extends SurfaceView implements Runnable {
     // Handle all the screen touches
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        this.motionEvent = motionEvent;
-
         // This switch block replaces the
         // if statement from the Sub Hunter game
-        switch (motionEvent.getAction() &
-                MotionEvent.ACTION_MASK) {
 
-            // The player has put their finger on the screen
-            case MotionEvent.ACTION_DOWN:
+        if (mGameOver) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                startNewGame();
+            }
+        } else {
+            switch (motionEvent.getAction() &
+                    MotionEvent.ACTION_MASK) {
 
-                // If the game was paused unpause
-                mPaused = false;
+                // The player has put their finger on the screen
+                case MotionEvent.ACTION_DOWN:
 
-                // Where did the touch happen
-                if(motionEvent.getX() > mScreenX / 2){
-                    // On the right hand side
-                    mBat.setMovementState(mBat.RIGHT);
-                }
-                else{
-                    // On the left hand side
-                    mBat.setMovementState(mBat.LEFT);
-                }
+                    // If the game was paused unpause
+                    mPaused = false;
 
-                break;
+                    // Where did the touch happen
+                    if (motionEvent.getX() > mScreenX / 2F) {
+                        // On the right hand side
+                        mBat.setMovementState(mBat.RIGHT);
+                    } else {
+                        // On the left hand side
+                        mBat.setMovementState(mBat.LEFT);
+                    }
 
-            // The player lifted their finger
-            // from anywhere on screen.
-            // It is possible to create bugs by using
-            // multiple fingers. We will use more
-            // complicated and robust touch handling
-            // in later projects
-            case MotionEvent.ACTION_UP:
+                    break;
 
-                // Stop the bat moving
-                mBat.setMovementState(mBat.STOPPED);
-                break;
+                // The player lifted their finger
+                // from anywhere on screen.
+                // It is possible to create bugs by using
+                // multiple fingers. We will use more
+                // complicated and robust touch handling
+                // in later projects
+                case MotionEvent.ACTION_UP:
+
+                    // Stop the bat moving
+                    mBat.setMovementState(mBat.STOPPED);
+                    break;
+            }
         }
         return true;
     }
@@ -408,7 +406,6 @@ class PongGame extends SurfaceView implements Runnable {
 
     }
 
-
     // This method is called by PongActivity
     // when the player starts the game
     public void resume() {
@@ -420,19 +417,4 @@ class PongGame extends SurfaceView implements Runnable {
         mGameThread.start();
     }
 
-    private boolean isGameOverTapped(float x, float y) {
-        // Define the coordinates of the game over message region
-        float gameOverMessageLeft = mScreenX / 2 - 100;
-        float gameOverMessageRight = mScreenX / 2 + 100;
-        float gameOverMessageTop = mScreenY / 2 - mFontSize;
-        float gameOverMessageBottom = mScreenY / 2 + mFontSize;
-
-        // Check if the tap coordinates (x, y) are within the region
-        if (x >= gameOverMessageLeft && x <= gameOverMessageRight &&
-                y >= gameOverMessageTop && y <= gameOverMessageBottom) {
-            return true;
-        }
-
-        return false;
-    }
 }
