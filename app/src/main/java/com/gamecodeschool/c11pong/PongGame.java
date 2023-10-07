@@ -22,8 +22,6 @@ import java.io.IOException;
 @SuppressLint("ViewConstructor")
 class PongGame extends SurfaceView implements Runnable {
 
-    private MotionEvent motionEvent;
-
     private boolean mGameOver;
 
     // These objects are needed to do the drawing
@@ -52,6 +50,8 @@ class PongGame extends SurfaceView implements Runnable {
     // The current score and lives remaining
     private int mScore = 0;
     private int mLives = 3;
+
+    private int totalLives = 3;
 
     // Here is the Thread and two control variables
     private Thread mGameThread = null;
@@ -226,9 +226,11 @@ class PongGame extends SurfaceView implements Runnable {
             mBall.increaseVelocity();
             mScore++;
             mSP.play(mBeepID, 1, 1, 0, 0, 1);
+
             // For every 5 points, you gain a life!
             if (mScore % 5 == 0) {
                 mLives++;
+                totalLives++;
             }
         }
 
@@ -312,9 +314,13 @@ class PongGame extends SurfaceView implements Runnable {
                 if (mScreenX > 1440) {
                     mCanvas.drawText("Game Over", mScreenX / 2.8F, mScreenY / 2.5F, mPaint);
                     mCanvas.drawText("Tap anywhere to restart.", mScreenX / 4.2F, mScreenY / 2F, mPaint);
+                    mCanvas.drawText("Score: " + mScore, mScreenX / 2.5F, mScreenY / 1.5F, mPaint);
+                    mCanvas.drawText("Total Lives: " + totalLives, mScreenX / 3F, mScreenY / 1.25F, mPaint);
                 } else {
                     mCanvas.drawText("Game Over", mScreenX / 2.8F, mScreenY / 2F - 100, mPaint);
                     mCanvas.drawText("Tap anywhere to restart.", mScreenX / 4.2F, mScreenY / 2F, mPaint);
+                    mCanvas.drawText("Score: " + mScore, mScreenX / 2.5F, mScreenY / 2F + 100, mPaint);
+                    mCanvas.drawText("Total Lives: " + totalLives, mScreenX / 3F, mScreenY / 2F + 200, mPaint);
                 }
             } else {
                 // Draw the HUD
