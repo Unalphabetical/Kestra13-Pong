@@ -43,7 +43,7 @@ class PongGame extends SurfaceView implements Runnable {
 
     private final int mNameTop;
 
-    private final int mNameLeft;
+    private final int mNameRight;
 
     // The game objects
     private final Bat mBat;
@@ -89,7 +89,7 @@ class PongGame extends SurfaceView implements Runnable {
 
         mNameTop = mScreenX / 20;
 
-        mNameLeft = mScreenX - 660;
+        mNameRight = ( mScreenX / 2 ) + ( mScreenX / 5 );
 
         // Initialize the objects
         // ready for drawing with
@@ -305,20 +305,24 @@ class PongGame extends SurfaceView implements Runnable {
             mPaint.setTextSize(mFontSize);
 
             if (mGameOver) {
-                // Game over background color
+                //// Game over background color
                 mCanvas.drawColor(mGameOverBackgroundColor);
 
-                // Display the game over message
-                mCanvas.drawText("Game Over", mScreenX / 2 - 100, mScreenY / 2, mPaint);
-
-                mCanvas.drawText("Tap anywhere to restart.", mScreenX / 2 - 300, mScreenY / 2 + 100, mPaint);
+                //// Display the game over message correctly based on screen size
+                if (mScreenX > 1440) {
+                    mCanvas.drawText("Game Over", mScreenX / 2.8F, mScreenY / 2.5F, mPaint);
+                    mCanvas.drawText("Tap anywhere to restart.", mScreenX / 4.2F, mScreenY / 2F, mPaint);
+                } else {
+                    mCanvas.drawText("Game Over", mScreenX / 2.8F, mScreenY / 2F - 100, mPaint);
+                    mCanvas.drawText("Tap anywhere to restart.", mScreenX / 4.2F, mScreenY / 2F, mPaint);
+                }
             } else {
                 // Draw the HUD
                 mCanvas.drawText("Score: " + mScore +
                                 "   Lives: " + mLives,
                         mFontMargin , mFontSize, mPaint);
 
-                mCanvas.drawText("Kestine Tran", mNameLeft, mNameTop, mPaint);
+                mCanvas.drawText("Kestine Tran", mNameRight, mNameTop, mPaint);
 
                 // Are we debugging?
                 boolean DEBUGGING = true;
